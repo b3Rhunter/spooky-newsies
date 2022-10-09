@@ -78,25 +78,27 @@ export default function Address(props) {
 
       <span style={{ verticalAlign: "middle", paddingLeft: 5, fontSize: props.fontSize ? props.fontSize : 28 }}>
         {props.onChange ? (
-          <Text editable={{ onChange: props.onChange }}>
+          <Text  editable={{ onChange: props.onChange }}>
             <a
-              style={{ color: currentTheme === "light" ? "#222222" : "#ddd" }}
+              className="addy"
+              style={{ color: currentTheme === "light" ? "#222222" : "#ddd", paddingRight: "10px" }}
               target="_blank"
               href={etherscanLink}
               rel="noopener noreferrer"
             >
-              {displayAddress}
+              {displayAddress} 
             </a>
           </Text>
         ) : (
           <Text>
             <a
-              style={{ color: currentTheme === "light" ? "#222222" : "#ddd" }}
+             
+              style={{ color: currentTheme === "light" ? "#ddd" : "rgb(181, 85, 7)", paddingRight: "10px" }}
               target="_blank"
               href={etherscanLink}
               rel="noopener noreferrer"
             >
-              {displayAddress}
+             {displayAddress} 
             </a>
           </Text>
         )}
