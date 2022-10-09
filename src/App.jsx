@@ -33,6 +33,7 @@ import { Home, ExampleUI, Hints, Subgraph } from "./views";
 import { useStaticJsonRPC } from "./hooks";
 import Banner from "./images/spookyNewsie_banner.png";
 import Preview from "./images/spookyNewsie_profile.gif";
+import Guy from "./images/guy.png";
 
 const { ethers } = require("ethers");
 /*
@@ -267,7 +268,7 @@ function App(props) {
       {/* ✏️ Edit the header and change the title to your project name */}
       <Header>
         {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
-        <div style={{ position: "relative", display: "flex", flexDirection: "column" }}>
+        <div style={{ position: "relative", display: "flex", flexDirection: "column", zIndex: "30" }}>
           <div style={{ display: "flex", flex: 1 }}>
             {USE_NETWORK_SELECTOR && (
               <div style={{ marginRight: 20 }}>
@@ -289,11 +290,27 @@ function App(props) {
               loadWeb3Modal={loadWeb3Modal}
               logoutOfWeb3Modal={logoutOfWeb3Modal}
               blockExplorer={blockExplorer}
+              style={{zIndex: "30"}}
             />
           </div>
         </div>
       </Header>
 
+      <img style={{
+        width: "40%",
+        position: "absolute",
+        bottom: "0",
+        left: "0",
+        zIndex: "50"
+      }} src={Guy} alt=""></img>
+
+<img className="rightGuy" style={{
+        width: "40%",
+        position: "absolute",
+        bottom: "0",
+        right: "0",
+        zIndex: "50",
+      }} src={Guy} alt=""></img>
 
       <Row>
         <Col span={24}>

@@ -16,6 +16,18 @@
   color: rgb(181, 85, 7);
 }
 
+.addy {
+  color: #fff;
+}
+
+.addy:hover {
+  color: rgb(181, 85, 7);
+}
+
+.rightGuy {
+  transform: scaleX(-1);
+}
+
 body, html {
   height: 100%;
   background-color:hsla(0,100%,1%,1);
@@ -130,6 +142,12 @@ z-index: +1;
 
   #title {
     font-size: 1.5em;
+  }
+  .App {
+    text-align: center;
+    height: 100%;
+    margin: 0;
+  
   }
 }
 
