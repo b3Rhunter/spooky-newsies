@@ -12,6 +12,10 @@
 
 .web3modal-modal-lightbox { z-index: 50 !important; }
 
+.balances:hover {
+  color: rgb(181, 85, 7);
+}
+
 body, html {
   height: 100%;
   background-color:hsla(0,100%,1%,1);
