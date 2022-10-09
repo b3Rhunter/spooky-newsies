@@ -264,7 +264,7 @@ function App(props) {
 
   return (
     <Row className="App">
-      <Col span={24}>
+      <Col  span={24}>
       {/* ✏️ Edit the header and change the title to your project name */}
       <Header>
         {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
@@ -298,7 +298,7 @@ function App(props) {
 
       <img style={{
         width: "40%",
-        position: "absolute",
+        position: "fixed",
         bottom: "0",
         left: "0",
         zIndex: "50"
@@ -306,7 +306,7 @@ function App(props) {
 
 <img className="rightGuy" style={{
         width: "40%",
-        position: "absolute",
+        position: "fixed",
         bottom: "0",
         right: "0",
         zIndex: "50",
@@ -321,7 +321,7 @@ function App(props) {
       </Row>
 
       <Row className="myCard"  style={{ marginBottom: "50px", marginTop: "50px"}}>
-      <Col  span={24}>
+      <Col span={24}>
         <div >
           <img className="preview" src={Preview} alt=""></img>
         </div>
