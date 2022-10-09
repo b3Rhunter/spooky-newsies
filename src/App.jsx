@@ -312,13 +312,15 @@ function App(props) {
         zIndex: "50",
       }} src={Guy} alt=""></img>
 
+
+
       <Row>
         <Col span={24}>
-          <img className="banner" style={{width: "100%", position: "relative", top: "50px"}} src={Banner} alt=""></img>    
+          <div className="parallax"></div>
         </Col>
       </Row>
 
-      <Row className="myCard"  style={{ marginBottom: "50px"}}>
+      <Row className="myCard"  style={{ marginBottom: "50px", marginTop: "50px"}}>
       <Col  span={24}>
         <div >
           <img className="preview" src={Preview} alt=""></img>

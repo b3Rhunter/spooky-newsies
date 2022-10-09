@@ -28,6 +28,20 @@
   transform: scaleX(-1);
 }
 
+.parallax {
+  /* The image used */
+  background-image: url("./images/spookyNewsie_banner.png");
+
+  /* Set a specific height */
+  min-height: 300px;
+
+  /* Create the parallax scrolling effect */
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 body, html {
   height: 100%;
   background-color:hsla(0,100%,1%,1);
