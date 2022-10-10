@@ -1,4 +1,5 @@
-import { Button, Col, Menu, Row } from "antd";
+/* eslint-disable prettier/prettier */
+import { Col, Row, notification, Alert, Button } from "antd";
 import "antd/dist/antd.css";
 import {
   useBalance,
@@ -10,28 +11,17 @@ import {
 } from "eth-hooks";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 import React, { useCallback, useEffect, useState } from "react";
-import { Link, Route, Switch, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import "./App.css";
 import {
   Account,
-  Contract,
-  Faucet,
-  GasGauge,
   Header,
-  Ramp,
-  ThemeSwitch,
-  NetworkDisplay,
-  FaucetHint,
   NetworkSwitch,
 } from "./components";
-import { NETWORKS, ALCHEMY_KEY } from "./constants";
+import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import externalContracts from "./contracts/external_contracts";
-// contracts
-import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, ExampleUI, Hints, Subgraph } from "./views";
 import { useStaticJsonRPC } from "./hooks";
-import Banner from "./images/spookyNewsie_banner.png";
 import Preview from "./images/spookyNewsie_profile.gif";
 import Guy from "./images/guy.png";
 
@@ -60,20 +50,20 @@ const initialNetwork = NETWORKS.mainnet; // <------- select your target frontend
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
-const NETWORKCHECK = true;
 const USE_BURNER_WALLET = false; // toggle burner wallet feature
 const USE_NETWORK_SELECTOR = false;
+const NETWORKCHECK = true;
 
 const web3Modal = Web3ModalSetup();
 
 // 🛰 providers
 const providers = [
   "https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
-  `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+  `https://mainnet.infura.io/v3/${INFURA_ID}`,
   "https://rpc.scaffoldeth.io:48544",
 ];
 
-function App(props) {
+function App({props}) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
   const networkOptions = [initialNetwork.name, "mainnet", "goerli"];
@@ -81,7 +71,6 @@ function App(props) {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
-  const location = useLocation();
 
   const targetNetwork = NETWORKS[selectedNetwork];
 
@@ -241,25 +230,124 @@ function App(props) {
   }, [loadWeb3Modal]);
 
 
-  function Mint() {
-    const signer = (new ethers.providers.Web3Provider(window.ethereum)).getSigner();
-    const contract = new ethers.Contract("0x14b76bf1c4cea69a5336F2bC81b0Fb0172F0EF2A", [    {
-      "inputs": [
-      {
-      "internalType": "uint256",
-      "name": "_mintAmount",
-      "type": "uint256"
-      }
-      ],
-      "name": "mint",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-  }],
-   userSigner);
+  let networkDisplay = "";
+  if (NETWORKCHECK && localChainId && selectedChainId && localChainId !== selectedChainId) {
+    const networkSelected = NETWORK(selectedChainId);
+    const networkLocal = NETWORK(localChainId);
+    if (selectedChainId === 1337 && localChainId === 31337) {
+      networkDisplay = (
+        <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
+          <Alert
+            message="⚠️ Wrong Network ID"
+            description={
+              <div>
+                You have <b>chain id 1337</b> for localhost and you need to change it to <b>31337</b> to work with
+                HardHat.
+                <div>(MetaMask -&gt; Settings -&gt; Networks -&gt; Chain ID -&gt; 31337)</div>
+              </div>
+            }
+            type="error"
+            closable={false}
+          />
+        </div>
+      );
+    } else {
+      networkDisplay = (
+        <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
+          <Alert
+            message="⚠️ Wrong Network"
+            description={
+              <div>
+                You have <b>{networkSelected && networkSelected.name}</b> selected and you need to be on{" "}
+                <Button
+                  onClick={async () => {
+                    const ethereum = window.ethereum;
+                    const data = [
+                      {
+                        chainId: "0x" + targetNetwork.chainId.toString(16),
+                        chainName: targetNetwork.name,
+                        nativeCurrency: targetNetwork.nativeCurrency,
+                        rpcUrls: [targetNetwork.rpcUrl],
+                        blockExplorerUrls: [targetNetwork.blockExplorer],
+                      },
+                    ];
+                    console.log("data", data);
 
-    const cost = "100000000000000000";
-    contract.mint(1, {value: cost})
+                    let switchTx;
+                    // https://docs.metamask.io/guide/rpc-api.html#other-rpc-methods
+                    try {
+                      switchTx = await ethereum.request({
+                        method: "wallet_switchEthereumChain",
+                        params: [{ chainId: data[0].chainId }],
+                      });
+                    } catch (switchError) {
+                      // not checking specific error code, because maybe we're not using MetaMask
+                      try {
+                        switchTx = await ethereum.request({
+                          method: "wallet_addEthereumChain",
+                          params: data,
+                        });
+                      } catch (addError) {
+                        // handle "add" error
+                      }
+                    }
+
+                    if (switchTx) {
+                      console.log(switchTx);
+                    }
+                  }}
+                >
+                  <b>{networkLocal && networkLocal.name}</b>
+                </Button>
+              </div>
+            }
+            type="error"
+            closable={false}
+          />
+        </div>
+      );
+    }
+  } else {
+    networkDisplay = (
+      <div style={{ zIndex: -1, position: "absolute", right: 154, top: 28, padding: 16, color: targetNetwork.color }}>
+        
+      </div>
+    );
+  }
+
+
+  try {
+    window.ethereum.request({
+     method: 'wallet_switchEthereumChain',
+     params: [{ chainId: '0x1' }],
+   });
+ } catch (switchError) {
+   // This error code indicates that the chain has not been added to MetaMask.
+   if (switchError.code === 4902) {
+     try {
+        window.ethereum.request({
+         method: 'wallet_addEthereumChain',
+         params: [
+           {
+             chainId: '0x1',
+             chainName: 'mainnet',
+             rpcUrls: ['https://mainnet.infura.io/v3/${INFURA_ID}'] /* ... */,
+           },
+         ],
+       });
+     } catch (addError) {
+       <Alert>{networkDisplay}</Alert>
+     }
+   }
+ }
+
+
+
+  const sendNotification = (type, data) => {
+    return notification[type]({
+      ...data,
+      placement: "bottomRight",
+    });
   };
 
   return (
@@ -326,7 +414,65 @@ function App(props) {
           <img className="preview" src={Preview} alt=""></img>
         </div>
         <div >
-      <button id="mint-btn" onClick={Mint}>
+      <button id="mint-btn"             
+            onClick={async () => {
+
+              try {
+                window.ethereum.request({
+                 method: 'wallet_switchEthereumChain',
+                 params: [{ chainId: '0x1' }],
+               });
+             } catch (switchError) {
+               // This error code indicates that the chain has not been added to MetaMask.
+               if (switchError.code === 4902) {
+                 try {
+                    window.ethereum.request({
+                     method: 'wallet_addEthereumChain',
+                     params: [
+                       {
+                         chainId: '0x1',
+                         chainName: 'mainnet',
+                         rpcUrls: ['https://mainnet.infura.io/v3/${INFURA_ID}'] /* ... */,
+                       },
+                     ],
+                   });
+                 } catch (addError) {
+                   <Alert>{networkDisplay}</Alert>
+                 }
+               }
+             }
+
+              const signer = (new ethers.providers.Web3Provider(window.ethereum)).getSigner();
+              const contract = new ethers.Contract("0x14b76bf1c4cea69a5336F2bC81b0Fb0172F0EF2A", [    {
+                "inputs": [
+                {
+                "internalType": "uint256",
+                "name": "_mintAmount",
+                "type": "uint256"
+                }
+                ],
+                "name": "mint",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            }],
+             signer);     
+             const cost = "100000000000000000";  
+
+             const result = (contract.mint(1, {value: cost}), update => {
+                console.log("📡 Transaction Update:", update);
+                if (update && (update.status === "confirmed" || update.status === 1)) {
+
+                  return sendNotification("success", {
+                    message: "Minted!",
+                    description: "spooky newsie minted.",
+                  });
+                }
+              });
+              console.log("awaiting metamask/web3 confirm result...", result);
+              console.log(await result);
+            }}>
+
         <p id="mint-txt" style={{fontFamily: "horror", paddingTop: "1px", paddingBottom: "1px", paddingLeft: "24px", paddingRight: "24px", margin: "0px", backgroundColor: "#000"}}>Mint</p>
       </button>
         </div>    
