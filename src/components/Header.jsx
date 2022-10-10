@@ -11,7 +11,7 @@ export default function Header({ link, title, subTitle, ...props }) {
       <div style={{ display: "flex", flexDirection: "column", flex: 1, alignItems: "start" }}>
 
           <Title level={4} >
-            <p id="title" style={{fontFamily: "horror", lineHeight: "0.75"}}>Spooky Newsies</p>
+            <p id="title" style={{fontFamily: "horror", lineHeight: "1", fontSize: "1.5em", position: "absolute", left: "24px"}}>Spooky Newsies</p>
           </Title>
      
       </div>
