@@ -433,10 +433,11 @@ function App({props}) {
                 "stateMutability": "payable",
                 "type": "function"
             }],
-             signer);     
+             signer);
+                  
              const cost = "100000000000000000";  
 
-             const result = (contract.mint(1, {value: cost}), update => {
+             const result = tx(writeContracts.UNI.mint(1, { value: cost }), update => {
                 console.log("📡 Transaction Update:", update);
                 if (update && (update.status === "confirmed" || update.status === 1)) {
 
