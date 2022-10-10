@@ -316,30 +316,7 @@ function App({props}) {
   }
 
 
-  try {
-    window.ethereum.request({
-     method: 'wallet_switchEthereumChain',
-     params: [{ chainId: '0x1' }],
-   });
- } catch (switchError) {
-   // This error code indicates that the chain has not been added to MetaMask.
-   if (switchError.code === 4902) {
-     try {
-        window.ethereum.request({
-         method: 'wallet_addEthereumChain',
-         params: [
-           {
-             chainId: '0x1',
-             chainName: 'mainnet',
-             rpcUrls: ['https://mainnet.infura.io/v3/${INFURA_ID}'] /* ... */,
-           },
-         ],
-       });
-     } catch (addError) {
-       <Alert>{networkDisplay}</Alert>
-     }
-   }
- }
+
 
 
 
